@@ -5,7 +5,7 @@ def init_open():
     heap = []
     # Created a heap.
     return heapq.heapify(heap)
-
+    #
 # The function inserts s into open
 def insert_to_open(open_list, s):  # Should be implemented according to the open list data structure
     heapq.heappush(open_list, s)
