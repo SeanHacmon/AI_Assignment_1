@@ -4,11 +4,13 @@ import heapq
 def init_open():
     heap = []
     # Created a heap.
-    return heapq.heapify(heap)
+    heapq.heapify(heap)
+    return heap
 
 # The function inserts s into open
 def insert_to_open(open_list, s):  # Should be implemented according to the open list data structure
     heapq.heappush(open_list, s)
+    heapq.heapify(open_list)
 
 # The function returns the best node in open (according to the search algorithm)
 def get_best(open_list):
@@ -22,17 +24,21 @@ def get_neighbors(grid, s_location):
     y = s_location[1]
 
     # right
-    if grid[x+1][y] != '@' and valid_move(grid, x+1, y):
-        neighbors.append(grid[x+1][y])
+    if valid_move(grid, x + 1, y):
+        if grid[x+1, y] != '@':
+            neighbors.append((x+1, y))
     # down
-    if grid[x][y+1] != '@' and valid_move(grid, x, y+1):
-        neighbors.append(grid[x+1][y])
+    if valid_move(grid, x, y + 1):
+        if grid[x, y+1] != '@':
+            neighbors.append((x, y+1))
     # left
-    if grid[x-1][y] != '@' and valid_move(grid, x-1, y):
-        neighbors.append(grid[x+1][y])
+    if valid_move(grid, x-1, y):
+        if grid[x - 1, y] != '@':
+            neighbors.append((x-1, y))
     # up
-    if grid[x][y-1] != '@' and valid_move(grid, x, y-1):
-        neighbors.append(grid[x+1][y])
+    if valid_move(grid, x, y-1):
+        if grid[x, y - 1] != '@':
+            neighbors.append((x, y-1))
     return neighbors
 
 # The function returns whether or not s_location is the goal location
@@ -49,11 +55,11 @@ def calculate_heuristic(s_location, goal_location):
 # we will check if n is in the open list
 def check_for_duplicates_open(n_location, s, open_list):
     for i in range(len(open_list)):
-        if open_list[i][0] == n_location[0] and open_list[i][1] == n_location[1]:
+        if open_list[i][3] == n_location[0] and open_list[i][4] == n_location[1]:
             if open_list[i][2] < s[2] + 1:
                 return True
         else:
-            heapq.heappop(open_list[i])
+            heapq.heappop(open_list)
     return False
   
   
@@ -61,7 +67,7 @@ def check_for_duplicates_open(n_location, s, open_list):
 # removes a node from closed_list if needed  
 def check_for_duplicates_close(n_location, s, closed_list):
     if n_location in closed_list:
-        if n_location[2] < closed_list[n_location][2] + 1:
+        if closed_list[n_location][2] < s[2] + 1:
             return True
         else:
             closed_list.pop(closed_list.pop(n_location))
@@ -78,7 +84,7 @@ def astar_search(grid, start_location, goal_location):
     # Mark the source node as
     # visited and enqueue it
     insert_to_open(open_list, start)
-    while not open_list.empty():
+    while len(open_list) != 0:
         # Dequeue a vertex from
         # queue and print it
         s = get_best(open_list)
@@ -121,6 +127,6 @@ def print_grid_route(route, grid):
 # Sean Functions
 def valid_move(grid, x, y):
     row = len(grid)
-    col = len(grid[0])
+    col = len(grid)
     return (0 <= x < row) and (0 <= y < col)
 
